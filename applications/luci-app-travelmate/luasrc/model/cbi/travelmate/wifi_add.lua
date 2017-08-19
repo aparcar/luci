@@ -7,6 +7,7 @@ local http = require("luci.http")
 local trmiface = uci.get("travelmate", "global", "trm_iface") or "trm_wwan"
 
 m = SimpleForm("add", translate("Add Wireless Uplink Configuration"))
+m.submit = translate("Save")
 m.cancel = translate("Back to overview")
 m.reset = false
 
@@ -18,7 +19,7 @@ m.hidden = {
 	device      = http.formvalue("device"),
 	ssid        = http.formvalue("ssid"),
 	wep         = http.formvalue("wep"),
-	wpa_suites	= http.formvalue("wpa_suites"),
+	wpa_suites  = http.formvalue("wpa_suites"),
 	wpa_version = http.formvalue("wpa_version")
 }
 
@@ -45,11 +46,11 @@ end
 
 function wssid.write(self, section, value)
 	newsection = uci:section("wireless", "wifi-iface", nil, {
-		mode       = "sta",
-		network    = trmiface,
-		device     = m.hidden.device,
-		ssid       = wssid:formvalue(section),
-		disabled   = "1"
+		mode     = "sta",
+		network  = trmiface,
+		device   = m.hidden.device,
+		ssid     = wssid:formvalue(section),
+		disabled = "1"
 	})
 	if (tonumber(m.hidden.wep) or 0) == 1 then
 		uci:set("wireless", newsection, "encryption", "wep-open")

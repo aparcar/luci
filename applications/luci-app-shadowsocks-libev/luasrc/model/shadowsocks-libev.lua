@@ -22,7 +22,7 @@ end
 function values_redir(o, xmode)
 	o.map.uci.foreach("shadowsocks-libev", "ss_redir", function(sdata)
 		local sname = sdata[".name"]
-		local mode = sdata["mode"]
+		local mode = sdata["mode"] or "tcp_only"
 		if mode and mode:find(xmode) then
 			local desc = "%s - %s" % {sname, mode}
 			o:value(sname, desc)
@@ -108,6 +108,7 @@ function options_common(s, tab)
 	s:taboption(tab, Value, "user", translate("Run as"))
 
 	s:taboption(tab, Flag, "verbose", translate("Verbose"))
+	s:taboption(tab, Flag, "ipv6_first", translate("IPv6 First"), translate("Prefer IPv6 addresses when resolving names"))
 	s:taboption(tab, Flag, "fast_open", translate("Enable TCP Fast Open"))
 	s:taboption(tab, Flag, "reuse_port", translate("Enable SO_REUSEPORT"))
 end
@@ -131,6 +132,8 @@ function cfgvalue_overview(sdata)
 		cfgvalue_overview_(sdata, lines, names_options_client)
 		if stype == "ss_tunnel" then
 			cfgvalue_overview_(sdata, lines, {"tunnel_address"})
+		elseif stype == "ss_redir" then
+			cfgvalue_overview_(sdata, lines, {"disable_sni"})
 		end
 		cfgvalue_overview_(sdata, lines, names_options_common)
 	else
@@ -153,6 +156,9 @@ function cfgvalue_overview_(sdata, lines, names)
 	for _, n in ipairs(names) do
 		local v = sdata[n]
 		if v ~= nil then
+			if n == "key" or n == "password" then
+				v = translate("<hidden>")
+			end
 			local fv = "<var>%s</var>" % ut.pcdata(v)
 			if sdata[".type"] ~= "ss_server" and n == "server" then
 				fv = '<a class="label" href="%s">%s</a>' % {
@@ -205,6 +211,7 @@ names_options_client = {
 
 names_options_common = {
 	"verbose",
+	"ipv6_first",
 	"fast_open",
 	"reuse_port",
 	"mode",
@@ -247,7 +254,4 @@ methods = {
 	"salsa20",
 	"chacha20",
 	"chacha20-ietf",
-	"aes-128-gcm",
-	"aes-192-gcm",
-	"aes-256-gcm",
 }

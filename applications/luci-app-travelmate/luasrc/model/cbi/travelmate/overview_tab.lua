@@ -4,8 +4,8 @@
 local fs = require("nixio.fs")
 local uci = require("luci.model.uci").cursor()
 local json = require("luci.jsonc")
-local nw  = require("luci.model.network").init()
-local fw  = require("luci.model.firewall").init()
+local nw = require("luci.model.network").init()
+local fw = require("luci.model.firewall").init()
 local trmiface = uci.get("travelmate", "global", "trm_iface") or "trm_wwan"
 local trminput = uci.get("travelmate", "global", "trm_rtfile") or "/tmp/trm_runtime.json"
 local uplink = uci.get("network", trmiface) or ""
@@ -18,7 +18,7 @@ m = Map("travelmate", translate("Travelmate"),
 	.. "see online documentation</a>", "https://github.com/openwrt/packages/blob/master/net/travelmate/files/README.md"))
 
 function m.on_after_commit(self)
-	luci.sys.call("/etc/init.d/travelmate restart >/dev/null 2>&1")
+	luci.sys.call("env -i /etc/init.d/travelmate restart >/dev/null 2>&1")
 	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "travelmate"))
 end
 
@@ -27,43 +27,38 @@ s = m:section(NamedSection, "global", "travelmate")
 -- Interface Wizard
 
 if uplink == "" then
-	dv = s:option(DummyValue, "nil", translate("Interface Wizard"))
+	dv = s:option(DummyValue, "", translate("Interface Wizard"))
 	dv.template = "cbi/nullsection"
 
-	o = s:option(Value, "trm_iface", translate("Uplink interface"))
+	o = s:option(Value, "", translate("Uplink interface"))
 	o.datatype = "and(uciname,rangelength(3,15))"
-	o.default = "trm_wwan"
+	o.default = trmiface
 	o.rmempty = false
 
-	function o.validate(self, value)
-		iface = value
-		return iface
-	end
-
-	function o.write(self, section, value)
-		uci:set("travelmate", section, "trm_iface", iface)
-		uci:save("travelmate")
-		uci:commit("travelmate")
-	end
-
-	btn = s:option(Button, "", translate("Create Uplink Interface"),
+	btn = s:option(Button, "trm_iface", translate("Create Uplink Interface"),
 		translate("Create a new wireless wan uplink interface, configure it to use dhcp and ")
 		.. translate("add it to the wan zone of the firewall. This step has only to be done once."))
 	btn.inputtitle = translate("Add Interface")
 	btn.inputstyle = "apply"
 	btn.disabled = false
-	function btn.write()
-		local net = nw:add_network(iface, { proto = "dhcp" })
-		if net then
-			nw:save("network")
-			nw:commit("network")
-			local zone = fw:get_zone_by_network("wan")
-			if zone then
-				zone:add_network(iface)
-				fw:save("firewall")
-				fw:commit("firewall")
-				luci.sys.call("env -i /bin/ubus call network reload >/dev/null 2>&1")
+	function btn.write(self, section, value)
+		local iface = o:formvalue(section)
+		if iface then
+			uci:set("travelmate", section, "trm_iface", iface)
+			uci:save("travelmate")
+			uci:commit("travelmate")
+			local net = nw:add_network(iface, { proto = "dhcp" })
+			if net then
+				nw:save("network")
+				nw:commit("network")
+				local zone = fw:get_zone_by_network("wan")
+				if zone then
+					zone:add_network(iface)
+					fw:save("firewall")
+					fw:commit("firewall")
+				end
 			end
+			luci.sys.call("env -i /bin/ubus call network reload >/dev/null 2>&1")
 		end
 		luci.http.redirect(luci.dispatcher.build_url("admin", "services", "travelmate"))
 	end
@@ -77,14 +72,24 @@ o1.default = o1.disabled
 o1.rmempty = false
 
 o2 = s:option(Flag, "trm_automatic", translate("Enable 'automatic' mode"),
-	translate("Keep travelmate in an active state."))
+	translate("Keep travelmate in an active state. Check every n seconds the connection status, i.e. the uplink availability."))
 o2.default = o2.enabled
 o2.rmempty = false
 
+btn = s:option(Button, "", translate("Manual Rescan"))
+btn:depends("trm_automatic", "")
+btn.inputtitle = translate("Rescan")
+btn.inputstyle = "find"
+btn.disabled = false
+function btn.write()
+	luci.sys.call("env -i /etc/init.d/travelmate start >/dev/null 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "travelmate"))
+end
+
 o3 = s:option(Value, "trm_iface", translate("Uplink / Trigger interface"),
-	translate("Name of the uplink interface that triggers travelmate processing."))
+	translate("Name of the uplink interface that triggers travelmate processing in 'manual' mode."))
 o3.datatype = "and(uciname,rangelength(3,15))"
-o3.default = "trm_wwan"
+o3.default = trmiface
 o3.rmempty = false
 
 o4 = s:option(Value, "trm_triggerdelay", translate("Trigger delay"),
@@ -159,6 +164,7 @@ translate("Options for further tweaking in case the defaults are not suitable fo
 
 e1 = e:option(Value, "trm_radio", translate("Radio selection"),
 	translate("Restrict travelmate to a dedicated radio, e.g. 'radio0'"))
+e1.datatype = "and(uciname,rangelength(6,6))"
 e1.rmempty = true
 
 e2 = e:option(Value, "trm_maxretry", translate("Connection Limit"),
@@ -176,7 +182,7 @@ e3.rmempty = false
 e4 = e:option(Value, "trm_timeout", translate("Overall Timeout"),
 	translate("Timeout in seconds between retries in 'automatic' mode"))
 e4.default = 60
-e4.datatype = "range(5,300)"
+e4.datatype = "range(60,300)"
 e4.rmempty = false
 
 return m
