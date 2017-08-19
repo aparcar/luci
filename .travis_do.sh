@@ -64,8 +64,8 @@ download_sdk() {
 # test_package will run on the `script` step.
 # test_package call make download check for very new/modified package
 test_packages2() {
-	# search for new or modified packages. PKGS will hold a list of package like 'admin/muninlite admin/monit ...'
-	PKGS=$(git diff --diff-filter=d --name-only "$TRAVIS_COMMIT_RANGE" | grep 'Makefile$' | grep -v '/files/' | awk -F'/Makefile' '{ print $1 }')
+	# search for new or modified packages. PKGS will hold a list of package like 'luci-app-adblock ...'
+	PKGS=$(git diff --diff-filter=d --name-only "$TRAVIS_COMMIT_RANGE" | grep '^applications' | awk -F/ '{ print $2 }' | uniq)
 
 	if [ -z "$PKGS" ] ; then
 		echo_blue "No new or modified packages found!"
@@ -98,10 +98,7 @@ EOF
 	echo_blue "=== Setting up SDK done"
 
 	RET=0
-	# E.g: pkg_dir => admin/muninlite
-	# pkg_name => muninlite
-	for pkg_dir in $PKGS ; do
-		pkg_name=$(echo "$pkg_dir" | awk -F/ '{ print $NF }')
+	for pkg_name in $PKGS ; do
 		echo_blue "=== $pkg_name: Starting quick tests"
 
 		exec_status 'WARNING|ERROR' make "package/$pkg_name/download" V=s || RET=1
@@ -112,18 +109,18 @@ EOF
 
 	[ $RET -ne 0 ] && return $RET
 
-	for pkg_dir in $PKGS ; do
-		pkg_name=$(echo "$pkg_dir" | awk -F/ '{ print $NF }')
+	for pkg_name in $PKGS ; do
 		echo_blue "=== $pkg_name: Starting compile test"
 
 		# we can't enable verbose built else we often hit Travis limits
 		# on log size and the job get killed
-		exec_status '^ERROR' make "package/$pkg_name/compile" -j3 || RET=1
+		CPU_MAX="$(( $(grep -c ^processor /proc/cpuinfo) + 1 ))"
+		exec_status '^ERROR' make "package/$pkg_name/compile" -j$CPU_MAX || RET=1
 
 		echo_blue "=== $pkg_name: compile test done"
 
 		echo_blue "=== $pkg_name: begin compile logs"
-		for f in $(find logs/package/feeds/packages/$pkg_name/ -type f); do
+		for f in $(find logs/package/feeds/luci/$pkg_name/ -type f); do
 			echo_blue "Printing $f"
 			cat "$f"
 		done
@@ -186,7 +183,7 @@ echo_blue "=== Travis ENV"
 while true; do
 	# if clone depth is too small, git rev-list / diff return incorrect or empty results
 	C="$(git rev-list ${TRAVIS_COMMIT_RANGE/.../..} | tail -n1)" 2>/dev/null
-	[ -n "$C" -a "$C" != "a22de9b74cf9579d1ce7e6cf1845b4afa4277b00" ] && break
+	[ -n "$C" -a "$C" != "3f5de3273c9e103b4909802e339db06fe0b53312" ] && break
 	echo_blue "Fetching 50 commits more"
 	git fetch origin --deepen=50
 done
