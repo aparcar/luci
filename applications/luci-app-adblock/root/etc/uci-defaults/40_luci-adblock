@@ -5,6 +5,7 @@ uci -q batch <<-EOF >/dev/null
 	add ucitrack adblock
 	set ucitrack.@adblock[-1].init=adblock
 	commit ucitrack
+	commit ucitrack
 EOF
 
 rm -f /tmp/luci-indexcache
