@@ -88,12 +88,43 @@ test_packages2() {
 	cd "$tmp_path"
 	tar Jxf "$SDK_HOME/$SDK.tar.xz" --strip=1
 
+	# just for testing
+	##################
+	TRAVIS_REPO_SLUG="openwrt/$(echo $TRAVIS_REPO_SLUG | awk -F/ '{ print $2 }')"
+	##################
+
 	# use github mirrors to spare lede servers
-	cat > feeds.conf <<EOF
-src-git base https://github.com/lede-project/source.git
-src-git packages https://github.com/openwrt/packages.git
-src-link luci $PACKAGES_DIR
-EOF
+	REPO_BASE="base https://github.com/lede-project/source.git"
+	REPO_PACKAGES="packages https://github.com/openwrt/packages.git"
+	REPO_LUCI="luci https://github.com/openwrt/luci.git"
+	REPO_TELEPHONY="telephony https://github.com/openwrt/telephony.git"
+	REPO_ROUTING="routing https://github.com/openwrt-routing/packages.git"
+
+	# we definitely want base
+	if [[ $REPO_BASE == *"$TRAVIS_REPO_SLUG"* ]]; then
+		echo "src-link base $PACKAGES_DIR" > feeds.conf
+	else
+		echo "src-git $REPO_BASE" > feeds.conf
+	fi
+
+	# we definitely want packages?
+	if [[ $REPO_PACKAGES == *"$TRAVIS_REPO_SLUG"* ]]; then
+		echo "src-link packages $PACKAGES_DIR" >> feeds.conf
+	else
+		echo "src-git $REPO_PACKAGES" >> feeds.conf
+		if [[ $REPO_LUCI == *"$TRAVIS_REPO_SLUG"* ]]; then
+			echo "src-link $(echo $REPO_LUCI | awk -F' ' '{ print $1 }') $PACKAGES_DIR" >> feeds.conf
+
+		elif [[ $REPO_TELEPHONY == *"$TRAVIS_REPO_SLUG"* ]]; then
+			echo "src-link $(echo $REPO_TELEPHONY | awk -F' ' '{ print $1 }') $PACKAGES_DIR" >> feeds.conf
+
+		elif [[ $REPO_ROUTING == *"$TRAVIS_REPO_SLUG"* ]]; then
+			echo "src-link $(echo $REPO_ROUTING | awk -F' ' '{ print $1 }') $PACKAGES_DIR" >> feeds.conf
+		fi
+	fi
+
+	echo_blue "=== Enabled repositories"
+	cat feeds.conf
 
 	# enable BUILD_LOG
 	sed -i '1s/^/config BUILD_LOG\n\tbool\n\tdefault y\n\n/' Config-build.in
