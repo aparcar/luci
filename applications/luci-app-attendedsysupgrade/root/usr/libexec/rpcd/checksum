@@ -1,0 +1,49 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+case "$1" in
+	list)
+		cat <<-EOT
+			{
+				"checksum": {
+					"type": "string",
+					"data": "string"
+				}
+			}
+EOT
+		;;
+	call)
+		case "$2" in
+			checksum)
+				read input
+				json_load "$input"
+				json_get_vars type data
+
+				case "$type" in
+					md5)
+						checksum="$(printf "%s" "$data" | md5sum -)"
+						;;
+					sha256)
+						checksum="$(printf "%s" "$data" | sha256sum -)"
+						;;
+				esac
+
+				if [ -n "$checksum" ]; then
+					cat <<-EOT
+						{
+							"type": "$type",
+							"checksum": "${checksum%% *}"
+						}
+EOT
+				else
+					cat <<-EOT
+						{
+							"error": "Unsupported checksum type \\"$type\\""
+						}
+EOT
+				fi
+				;;
+		esac
+		;;
+esac

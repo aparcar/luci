@@ -11,6 +11,9 @@
 					"board",
 					"info"
 				],
+				"checksum": [
+					"checksum"
+				],
 				"uci": [
 					"get", "set", "commit"
 				]
