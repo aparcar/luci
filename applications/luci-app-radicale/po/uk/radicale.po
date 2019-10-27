@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-10-27 21:30+0000\n"
+"PO-Revision-Date: 2019-10-27 22:31+0000\n"
 "Last-Translator: Yurii Petrashko <yuripet@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsradicale/uk/>\n"
@@ -490,7 +490,7 @@ msgstr ""
 #: applications/luci-app-radicale/luasrc/controller/radicale.lua:42
 #: applications/luci-app-radicale/luasrc/controller/radicale.lua:45
 msgid "Version"
-msgstr ""
+msgstr "Версія"
 
 #: applications/luci-app-radicale/luasrc/controller/radicale.lua:38
 msgid "Version Information"
