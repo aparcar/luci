@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: luci-app-ddns 2.4.0-1\n"
 "POT-Creation-Date: 2016-01-30 11:07+0100\n"
-"PO-Revision-Date: 2019-10-27 21:29+0000\n"
+"PO-Revision-Date: 2019-10-27 22:31+0000\n"
 "Last-Translator: Yurii Petrashko <yuripet@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsddns/uk/>\n"
@@ -789,7 +789,7 @@ msgstr ""
 #: applications/luci-app-ddns/luasrc/controller/ddns.lua:97
 #: applications/luci-app-ddns/luasrc/controller/ddns.lua:100
 msgid "Version"
-msgstr ""
+msgstr "Версія"
 
 #: applications/luci-app-ddns/luasrc/controller/ddns.lua:93
 msgid "Version Information"
