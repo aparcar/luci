@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-10-27 21:31+0000\n"
+"PO-Revision-Date: 2019-10-27 22:31+0000\n"
 "Last-Translator: Yurii Petrashko <yuripet@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsadblock/uk/>\n"
@@ -248,7 +248,7 @@ msgstr ""
 
 #: applications/luci-app-adblock/luasrc/view/adblock/report.htm:302
 msgid "Filter"
-msgstr ""
+msgstr "Фільтр"
 
 #: applications/luci-app-adblock/luasrc/view/adblock/report.htm:292
 msgid ""
