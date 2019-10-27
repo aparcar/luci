@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-06-10 03:41+0200\n"
-"PO-Revision-Date: 2019-10-25 17:53+0000\n"
+"PO-Revision-Date: 2019-10-27 12:53+0000\n"
 "Last-Translator: Franco Castillo <castillofrancodamian@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/openwrt/luci/es/>"
 "\n"
@@ -1375,7 +1375,7 @@ msgstr "Velocidad de datos"
 #: modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js:160
 #: modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js:171
 msgid "Debug"
-msgstr "Depuración"
+msgstr "Depurar"
 
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js:1184
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js:1208
@@ -1840,7 +1840,7 @@ msgstr "Activar/Desactivar"
 #: modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js:375
 #: modules/luci-mod-system/htdocs/luci-static/resources/view/system/startup.js:61
 msgid "Enabled"
-msgstr "Activado"
+msgstr "Activar"
 
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js:414
 msgid "Enables IGMP snooping on this bridge"
@@ -2694,7 +2694,7 @@ msgstr "Entrante:"
 
 #: modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js:161
 msgid "Info"
-msgstr "Información"
+msgstr "Info"
 
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js:94
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/network.js:105
