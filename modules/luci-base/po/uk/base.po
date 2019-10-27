@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"PO-Revision-Date: 2019-10-27 21:27+0000\n"
+"PO-Revision-Date: 2019-10-27 22:31+0000\n"
 "Last-Translator: Yurii Petrashko <yuripet@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/openwrt/luci/"
 "uk/>\n"
@@ -4103,11 +4103,11 @@ msgstr "Шлях до закритого ключа"
 
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js:1454
 msgid "Path to inner CA-Certificate"
-msgstr "Шлях до внутрішнього CA-сертифікату"
+msgstr "Шлях до внутрішнього CA-сертифіката"
 
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js:1460
 msgid "Path to inner Client-Certificate"
-msgstr "Шлях до внутрішнього сертифікату клієнта"
+msgstr "Шлях до внутрішнього сертифіката клієнта"
 
 #: modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js:1466
 msgid "Path to inner Private Key"
