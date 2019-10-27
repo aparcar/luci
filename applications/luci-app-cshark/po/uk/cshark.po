@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-10-27 21:29+0000\n"
+"PO-Revision-Date: 2019-10-27 22:31+0000\n"
 "Last-Translator: Yurii Petrashko <yuripet@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationscshark/uk/>\n"
@@ -47,7 +47,7 @@ msgstr ""
 #: applications/luci-app-cshark/luasrc/view/cshark.htm:23
 #: applications/luci-app-cshark/luasrc/view/cshark.htm:51
 msgid "Filter"
-msgstr ""
+msgstr "Фільтр"
 
 #: applications/luci-app-cshark/luasrc/view/cshark.htm:21
 #: applications/luci-app-cshark/luasrc/view/cshark.htm:28
